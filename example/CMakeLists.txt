@@ -1,0 +1,4 @@
+add_subdirectory(LogTest)
+add_subdirectory(TimerTest)
+add_subdirectory(ProtoTest)
+add_subdirectory(GoogleTest)
