@@ -34,8 +34,9 @@ add_library(tool STATIC ${TOOL_ALL_SOURCE_CODE})
 target_link_libraries(tool PRIVATE spdlog::spdlog protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 target_link_libraries(tool PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 target_link_libraries(tool PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+target_link_libraries(tool PRIVATE miniz::miniz)
 
-target_include_directories(tool PUBLIC ${SPDLOG_INCLUDES} ${PROTOBUF_INCLUDES} ${GTEST_INCLUDE_DIRS}) 
+target_include_directories(tool PUBLIC ${SPDLOG_INCLUDES} ${PROTOBUF_INCLUDES} ${GTEST_INCLUDE_DIRS} ${MINIZ_INCLUDE_DIRS}) 
 
 # PUBLIC 表示这些头文件路径会传播给任何链接 tool 的目标，这些目标自动包含 File/ 和 Log/ 目录的头文件
 target_include_directories(tool PUBLIC ${MODULES_SOURCE_DIR}) 

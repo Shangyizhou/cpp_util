@@ -35,6 +35,8 @@ if(GTest_FOUND)
     message(STATUS "GTest libraries: ${GTEST_LIBRARIES}")
 endif()
 
+find_package(miniz CONFIG REQUIRED)
+
 if(TOOL_BUILD_CORE)
     message(STATUS "Build core")
     add_subdirectory(core)
