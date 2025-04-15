@@ -9,19 +9,19 @@ namespace tool
     {
 
     public:
-        void start();
+        void Start();
 
-        void stop();
+        void Stop();
 
-        double getCurrentTime() const;
+        double GetCurrentTime() const;
 
-        double getTotalTime() const;
+        double GetTotalTime() const;
 
-        int getCount() const;
+        int GetCount() const;
 
-        double getAverageTime() const;
+        double GetAverageTime() const;
 
-        void reset();
+        void Reset();
 
     private:
         std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;

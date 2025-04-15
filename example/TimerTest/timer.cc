@@ -11,10 +11,10 @@ void long_func() {
 int main() {
     LOG_INFO("Start long_func");
     tool::TimerSimple timer;
-    timer.start();
+    timer.Start();
     long_func();
-    timer.stop();
-    LOG_INFO("long_func took {} ms", timer.getTotalTime());
+    timer.Stop();
+    LOG_INFO("long_func took {} ms", timer.GetTotalTime());
 
     return 0;
 }

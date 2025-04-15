@@ -2,12 +2,12 @@
 
 namespace tool
 {
-    void TimerSimple::start()
+    void TimerSimple::Start()
     {
         start_time_ = std::chrono::high_resolution_clock::now();
     }
 
-    void TimerSimple::stop()
+    void TimerSimple::Stop()
     {
         end_time_ = std::chrono::high_resolution_clock::now();
         current_time_ = (end_time_ - start_time_);
@@ -16,22 +16,22 @@ namespace tool
         count_ += 1;
     }
 
-    double TimerSimple::getCurrentTime() const
+    double TimerSimple::GetCurrentTime() const
     {
         return current_time_.count();
     }
 
-    double TimerSimple::getTotalTime() const
+    double TimerSimple::GetTotalTime() const
     {
         return current_time_.count();
     }
 
-    int TimerSimple::getCount() const
+    int TimerSimple::GetCount() const
     {
         return count_;
     }
 
-    double TimerSimple::getAverageTime() const
+    double TimerSimple::GetAverageTime() const
     {
         if (count_ > 0)
         {
@@ -43,7 +43,7 @@ namespace tool
         }
     }
 
-    void TimerSimple::reset()
+    void TimerSimple::Reset()
     {
         start_time_ = end_time_ = {};
         total_time_ = current_time_ = {};

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.5.0)
 
 set(CMAKE_TOOLCHAIN_FILE "/home/shangyizhou/code/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 project(MyProject)
@@ -18,6 +18,14 @@ if(TARGET spdlog::spdlog)
     message(STATUS "ACTUAL spdlog includes: ${SPDLOG_INCLUDES}")
     message(STATUS "ACTUAL spdlog lib: ${SPDLOG_LIBS}")
 endif()
+
+find_package(FFMPEG REQUIRED)
+if(FFMPEG_FOUND)
+    message(STATUS "FFMPEG version: ${FFMPEG_VERSION}")
+    message(STATUS "FFMPEG includes: ${FFMPEG_INCLUDE_DIRS}")
+    message(STATUS "FFMPEG libraries: ${FFMPEG_LIBRARIES}")
+endif()
+
 
 find_package(protobuf CONFIG REQUIRED)
 
