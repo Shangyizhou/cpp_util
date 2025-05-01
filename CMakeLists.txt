@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.22.0)
+cmake_minimum_required(VERSION 3.5.0)
 
-set(CMAKE_TOOLCHAIN_FILE "/home/shangyizhou/code/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+set(CMAKE_TOOLCHAIN_FILE "/home/shangyizhou/code/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 project(MyProject)
 
 option(TOOL_BUILD_CORE "whether build core" ON)
@@ -44,18 +44,6 @@ if(GTest_FOUND)
 endif()
 
 find_package(miniz CONFIG REQUIRED)
-if (miniz_FOUND)
-    message(STATUS "miniz version: ${miniz_VERSION}")
-    message(STATUS "miniz includes: ${MINIZ_INCLUDE_DIRS}")
-    message(STATUS "miniz libraries: ${MINIZ_LIBRARIES}")
-endif()
-
-find_package(SDL2 CONFIG REQUIRED)
-if(SDL2_FOUND)
-    message(STATUS "SDL2 version: ${SDL_VERSION}")
-    message(STATUS "SDL2 includes: ${SDL_INCLUDE_DIRS}")
-    message(STATUS "SDL2 libraries: ${SDL_LIBRARIES}")
-endif()
 
 if(TOOL_BUILD_CORE)
     message(STATUS "Build core")
