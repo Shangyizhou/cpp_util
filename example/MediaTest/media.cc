@@ -1,27 +1,37 @@
-#include "Media/demuxer.h"
-#include "Media/decoder.h"
+#include "Media2/video_decoder.h"
+#include "Media2/demuxer.h"
+#include "Media2/context.h"
 
 #include <iostream>
+#include <thread>
+
 
 int main() {
-    tool::Demuxer demuxer("/home/shangyizhou/code/cpp/tool/bin/video/video.mp4");
-    demuxer.Prepare();
+    auto context = std::make_shared<tool::Context>();
+    context->input_filename_ = "/home/shangyizhou/code/cpp_util/video/BigBuckBunny_320x180.mp4";
     
+    tool::Demuxer demuxer(context);
+    tool::VideoDecoder decoder(context);
 
-    auto video_stream = demuxer.GetVideoStream();
-    tool::Decoder decoder(video_stream);
-    decoder.SetFrameCallback([](AVFrame *frame) {
-        // Process decoded frame
-        std::cout << "Decoded frame with width: " << frame->width << ", height: " << frame->height << std::endl;
+    demuxer.Prepare();
+
+    auto error = decoder.Prepare();
+    if (error) {
+        LOG_ERROR("decode prepare error");
+        return -1;
+    }
+
+    LOG_INFO("prepare success");
+    std::thread t1([&](){
+        demuxer.Process();
     });
 
-    demuxer.SetVideoCallback([&decoder](AVPacket* packet) {
-        // Process video packet
-        std::cout << "Processing video packet with size: " << packet->size << std::endl;
-        decoder.Decode(packet);
+    std::thread t2([&](){
+        decoder.Decode();
     });
 
-    demuxer.Process();
+    t1.join();
+    t2.join();
     
     return 0;
 }

@@ -7,11 +7,11 @@ std::string kServiceDomain = "com.syz.service";
 
 std::shared_ptr<Error> Error::kNoError = nullptr;
 
-std::shared_ptr<Error> NewToolError(int code, const std::string& desc) {
+std::shared_ptr<Error> Error::NewToolError(int code, const std::string& desc) {
     return std::make_shared<Error>(code, kToolDomain, desc);
 }
 
-std::shared_ptr<Error> NewServiceError(int code, const std::string& desc) {
+std::shared_ptr<Error> Error::NewServiceError(int code, const std::string& desc) {
     return std::make_shared<Error>(code, kServiceDomain, desc);
 }
 
