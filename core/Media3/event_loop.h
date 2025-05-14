@@ -1,0 +1,22 @@
+#ifndef FFPLAYER_EVENT_LOOP_H_
+#define FFPLAYER_EVENT_LOOP_H_
+
+#include <map>
+#include <functional>
+#include <SDL2/SDL.h>
+#include "player.h"
+
+class EventLoop {
+public:
+    EventLoop();
+
+    int run(Player &player);
+    void quit();
+    void addEvent(int type, const std::function<void(SDL_Event*)> &cb);
+
+    static EventLoop *instance();
+private:
+    std::map<int, std::function<void(SDL_Event *)>> m_eventMap;
+};
+
+#endif
