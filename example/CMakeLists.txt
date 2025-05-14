@@ -8,3 +8,5 @@
 # add_subdirectory(AnyTest)
 add_subdirectory(MediaTest)
 add_subdirectory(PlayerTest)
+add_subdirectory(PlayerTest3)
+# add_subdirectory(PlayerTest2)

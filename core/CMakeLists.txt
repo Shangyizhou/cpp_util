@@ -11,6 +11,7 @@ set(CXX_FLAGS
 # 定义源码目录列表
 set(MODULES_SOURCE_DIR
     ${TOOL_SOURCE_DIR}
+    ${TOOL_SOURCE_DIR}/Media3
     ${TOOL_SOURCE_DIR}/File
     ${TOOL_SOURCE_DIR}/Log
     ${TOOL_SOURCE_DIR}/Timer

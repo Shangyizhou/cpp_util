@@ -389,6 +389,7 @@ double synchronize_video(VideoState *is, AVFrame *src_frame, double pts) {
   /* if we are repeating a frame, adjust clock accordingly */
   frame_delay += src_frame->repeat_pict * (frame_delay * 0.5);
   is->video_clock += frame_delay;
+  pts = is->video_clock;
   return pts;
 }
 
@@ -641,76 +642,79 @@ static void video_display(VideoState *is){
   frame_queue_pop(&is->pictq);
 }
 
+// 控制视频帧的刷新和显
 void video_refresh_timer(void *userdata) {
+  VideoState *is = (VideoState *)userdata; // 获取当前视频状态对象
+  Frame *vp = NULL; // 当前帧指针
 
-  VideoState *is = (VideoState *)userdata;
-  Frame *vp = NULL;
+  double actual_delay, delay, sync_threshold, ref_clock, diff; // 定义用于计算延迟和同步的变量
 
-  double actual_delay, delay, sync_threshold, ref_clock, diff;
-  
-  if(is->video_st) {
-    if(is->pictq.size == 0) {
-      schedule_refresh(is, 1); //if the queue is empty, so we shoud be as fast as checking queue of picture
-    } else {
-      /* Now, normally here goes a ton of code
-	       about timing, etc. we're just going to
-	       guess at a delay for now. You can
-	       increase and decrease this value and hard code
-	       the timing - but I don't suggest that ;)
-	       We'll learn how to do it for real later.
-      */
-      vp = frame_queue_peek(&is->pictq);
-      is->video_current_pts = vp->pts;
-      is->video_current_pts_time = av_gettime();
-      if(is->frame_last_pts == 0) {
-        delay = 0;
-      }else {
-        delay = vp->pts - is->frame_last_pts; /* the pts from last time */
-      }
-      
-      if(delay <= 0 || delay >= 1.0) {
-        /* if incorrect delay, use previous one */
-        delay = is->frame_last_delay;
-      }
+  if (is->video_st) { // 检查是否有视频流
+      if (is->pictq.size == 0) { // 如果帧队列为空
+          schedule_refresh(is, 1); // 快速检查队列，延迟 1ms 后再次触发刷新
+      } else {
+          // 从帧队列中获取当前帧
+          vp = frame_queue_peek(&is->pictq);
 
-      /* save for next time */
-      is->frame_last_delay = delay;
-      is->frame_last_pts = vp->pts;
+          // 更新当前视频的显示时间戳和系统时间
+          is->video_current_pts = vp->pts; // 当前帧的 PTS（显示时间戳）
+          is->video_current_pts_time = av_gettime(); // 当前系统时间（微秒）
 
-      /* update delay to sync to audio if not master source */
-      if(is->av_sync_type != AV_SYNC_VIDEO_MASTER) {
-        ref_clock = get_master_clock(is);
-        diff = vp->pts - ref_clock;
-
-        /* Skip or repeat the frame. Take delay into account
-          FFPlay still doesn't "know if this is the best guess." */
-        sync_threshold = (delay > AV_SYNC_THRESHOLD) ? delay : AV_SYNC_THRESHOLD;
-        if(fabs(diff) < AV_NOSYNC_THRESHOLD) {
-          if(diff <= -sync_threshold) {
-            delay = 0;
-          } else if(diff >= sync_threshold) {
-            delay = 2 * delay;
+          if (is->frame_last_pts == 0) { // 如果是第一帧
+              delay = 0; // 没有延迟
+          } else {
+              // 计算当前帧与上一帧的时间差
+              delay = vp->pts - is->frame_last_pts;
           }
-        }
-      }
 
-      is->frame_timer += delay;
-      /* computer the REAL delay */
-      actual_delay = is->frame_timer - (av_gettime() / 1000000.0);
-      if(actual_delay < 0.010) {
-        /* Really it should skip the picture instead */
-        actual_delay = 0.010;
-      }
+          // 如果延迟不合理（如负值或过大），使用上一帧的延迟
+          if (delay <= 0 || delay >= 1.0) {
+              delay = is->frame_last_delay;
+          }
 
-      schedule_refresh(is, (int)(actual_delay * 1000 + 0.5));
-      
-      /* show the picture! */
-      video_display(is);
-    }
+          // 保存当前帧的延迟和 PTS，供下一帧使用
+          is->frame_last_delay = delay;
+          is->frame_last_pts = vp->pts;
+
+          // 如果同步类型不是视频主时钟，则根据主时钟调整延迟
+          if (is->av_sync_type != AV_SYNC_VIDEO_MASTER) {
+              ref_clock = get_master_clock(is); // 获取主时钟（音频或外部时钟）
+              diff = vp->pts - ref_clock; // 当前帧的 PTS 与主时钟的差值
+
+              // 设置同步阈值
+              sync_threshold = (delay > AV_SYNC_THRESHOLD) ? delay : AV_SYNC_THRESHOLD;
+
+              // 如果差值在可同步范围内，调整延迟
+              if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
+                  if (diff <= -sync_threshold) {
+                      delay = 0; // 跳过帧
+                  } else if (diff >= sync_threshold) {
+                      delay = 2 * delay; // 延迟显示
+                  }
+              }
+          }
+
+          // 更新帧计时器
+          is->frame_timer += delay;
+
+          // 计算实际延迟
+          actual_delay = is->frame_timer - (av_gettime() / 1000000.0); // 当前帧计时器与系统时间的差值
+          if (actual_delay < 0.010) { // 如果实际延迟过小（小于 10ms）
+              actual_delay = 0.010; // 设置最小延迟为 10ms
+          }
+
+          // 调度下一次刷新
+          schedule_refresh(is, (int)(actual_delay * 1000 + 0.5)); // 将延迟转换为毫秒并调度刷新
+
+          // 显示当前帧
+          video_display(is);
+      }
   } else {
-    schedule_refresh(is, 100);
+      // 如果没有视频流，延迟 100ms 再次检查
+      schedule_refresh(is, 100);
   }
 }
+
 static int queue_picture(VideoState *is, 
                          AVFrame *src_frame, 
                          double pts, 
@@ -816,23 +820,26 @@ static int audio_open(void *opaque,
   SDL_AudioSpec wanted_spec, spec;
   int wanted_nb_channels = wanted_channel_layout->nb_channels;
   
-  // Set audio settings from codec info
-  wanted_spec.freq = wanted_sample_rate;
-  wanted_spec.format = AUDIO_S16SYS;
-  wanted_spec.channels = wanted_nb_channels;
-  wanted_spec.silence = 0;
-  wanted_spec.samples = SDL_AUDIO_BUFFER_SIZE;
-  wanted_spec.callback = sdl_audio_callback;
-  wanted_spec.userdata = (void*)opaque;
+  // 设置音频参数
+  wanted_spec.freq = wanted_sample_rate;         // 采样率
+  wanted_spec.format = AUDIO_S16SYS;             // 音频格式（16 位有符号整数，系统字节序）
+  wanted_spec.channels = wanted_nb_channels;     // 通道数
+  wanted_spec.silence = 0;                       // 静音值（0 表示静音）
+  wanted_spec.samples = SDL_AUDIO_BUFFER_SIZE;   // 音频缓冲区大小
+  wanted_spec.callback = sdl_audio_callback;     // 音频回调函数
+  wanted_spec.userdata = (void*)opaque;          // 用户数据（传递 VideoState 对象）
 
   av_log(NULL, AV_LOG_INFO, 
         "wanted spec: channels:%d, sample_fmt:%d, sample_rate:%d \n",
         wanted_nb_channels, AUDIO_S16SYS, wanted_sample_rate);
-
+  
+  // 打开音频设备
+  // wanted_spec 是期望的音频参数，spec 是实际打开的音频设备参数。
   if(SDL_OpenAudio(&wanted_spec, &spec) < 0) {
       av_log( NULL, AV_LOG_ERROR, "SDL_OpenAudio: %s\n", SDL_GetError());
       return -1;
   }
+  // 返回缓冲区的大小
   return spec.size;
 }
 
