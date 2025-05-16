@@ -1,6 +1,6 @@
-add_executable(player3 main.cc)
-target_link_libraries(player3 tool)
+add_executable(ffplayer player.cc)
+target_link_libraries(ffplayer tool)
 # 设置可执行文件输出到项目根目录下的 bin 文件夹
-set_target_properties(player3 PROPERTIES
+set_target_properties(ffplayer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
