@@ -1,5 +1,5 @@
-#include "Media3/event_loop.h"
-#include "Media3/player.h"
+#include "Media/event_loop.h"
+#include "Media/player.h"
 
 int main(int argc, char *argv[]) {
     //if (argc < 2) {

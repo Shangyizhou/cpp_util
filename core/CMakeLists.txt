@@ -11,7 +11,7 @@ set(CXX_FLAGS
 # 定义源码目录列表
 set(MODULES_SOURCE_DIR
     ${TOOL_SOURCE_DIR}
-    ${TOOL_SOURCE_DIR}/Media3
+    ${TOOL_SOURCE_DIR}/Media
     ${TOOL_SOURCE_DIR}/File
     ${TOOL_SOURCE_DIR}/Log
     ${TOOL_SOURCE_DIR}/Timer
@@ -27,7 +27,7 @@ foreach(file_path ${MODULES_SOURCE_DIR})
             ${file_path}/*.mm ${file_path}/*.cpp
     )
     # 排除路径中包含 "proto" 目录的文件（示例）
-    list(FILTER file_source EXCLUDE REGEX "/Media/")
+#    list(FILTER file_source EXCLUDE REGEX "")
     list(APPEND TOOL_ALL_SOURCE_CODE ${file_source})
 endforeach()
 
