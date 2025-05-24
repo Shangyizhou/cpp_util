@@ -17,6 +17,8 @@ set(MODULES_SOURCE_DIR
     ${TOOL_SOURCE_DIR}/Timer
     ${TOOL_SOURCE_DIR}/proto
     ${TOOL_SOURCE_DIR}/Foundation
+    ${TOOL_SOURCE_DIR}/DB
+    ${TOOL_SOURCE_DIR}/Strand
 )
 
 # 递归遍历收集所有源文件
@@ -39,6 +41,8 @@ target_link_libraries(tool PRIVATE spdlog::spdlog protobuf::libprotoc protobuf::
 target_link_libraries(tool PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 target_link_libraries(tool PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(tool PRIVATE miniz::miniz)
+target_link_libraries(tool PRIVATE sqlite_orm::sqlite_orm)
+
 target_link_libraries(tool
         PRIVATE
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
