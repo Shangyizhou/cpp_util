@@ -57,6 +57,23 @@ if(SDL2_FOUND)
     message(STATUS "SDL2 libraries: ${SDL_LIBRARIES}")
 endif()
 
+find_package(SqliteOrm CONFIG REQUIRED)
+if(SqliteOrm_FOUND)
+    message(STATUS "SqliteOrm found: ${SqliteOrm_FOUND}")
+    message(STATUS "SqliteOrm version: ${SqliteOrm_VERSION}")
+    message(STATUS "SqliteOrm config dir: ${SqliteOrm_DIR}")
+
+    # 获取SqliteOrm目标属性
+    if(TARGET sqlite_orm::sqlite_orm)
+        get_target_property(SQLITE_ORM_INCLUDES sqlite_orm::sqlite_orm INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(SQLITE_ORM_LIBRARIES sqlite_orm::sqlite_orm IMPORTED_LOCATION_RELEASE)
+        message(STATUS "SqliteOrm include directories: ${SQLITE_ORM_INCLUDES}")
+        message(STATUS "SqliteOrm library location: ${SQLITE_ORM_LIBRARIES}")
+    endif()
+else()
+    message(FATAL_ERROR "SqliteOrm not found!")
+endif()
+
 if(TOOL_BUILD_CORE)
     message(STATUS "Build core")
     add_subdirectory(core)
