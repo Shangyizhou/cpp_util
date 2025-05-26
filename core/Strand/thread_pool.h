@@ -3,7 +3,7 @@
 #include <thread>
 #include <atomic>
 #include <condition_variable>
-#include <list>
+#include <queue>
 #include <vector>
 #include <memory>
 #include <functional>
@@ -18,9 +18,9 @@ class ThreadPool {
 public:
     ThreadPool(uint32_t size);
 
-    void Start();
+    ~ThreadPool();
 
-    void Stop();
+    bool Start();
 
     template<typename F, typename... Args>
     void Post(F&&f, Args&&... args) {
@@ -31,7 +31,7 @@ public:
         auto task = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            task_queue_.emplace_back([task]{ task(); });
+            task_queue_.emplace([task = std::move(task)]{ task(); });
         }
 
         cond_.notify_all();
@@ -44,13 +44,12 @@ public:
         }
 
         using return_type = typename std::decay<std::result_of_t<F(Args...)>>::type;
-        auto task = std::bind(std::forward<F>(f), std::forward<Args>(args)...);
-        auto packaged_task = std::make_shared<std::packaged_task<return_type()>>(task);
+        auto packaged_task = std::make_shared<std::packaged_task<return_type()>>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
 
         std::future<return_type> res = packaged_task->get_future();
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            task_queue_.emplace_back([packaged_task]{ (*packaged_task)(); });
+            task_queue_.emplace([packaged_task = std::move(packaged_task)]{ (*packaged_task)(); });
         }
         cond_.notify_all();
         
@@ -59,6 +58,8 @@ public:
 
 private:
     void ThreadEntry();
+
+    void Stop();
 
 private:
     // 线程基本信息的一个封装
@@ -73,7 +74,7 @@ private:
 
     using Task = std::function<void()>;
 
-    std::list<Task> task_queue_;
+    std::queue<Task> task_queue_;
     std::vector<std::unique_ptr<ThreadInfo>> thread_list_;
     std::atomic<bool> start_{false};
     std::atomic<bool> stop_{false};
