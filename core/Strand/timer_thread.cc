@@ -81,9 +81,9 @@ void TimerThread::PostDelayed(Task task, const std::chrono::microseconds& delay)
     cond_.notify_one();
 }
 
-void TimerThread::PostDelayedRepeated(Task task, const std::chrono::microseconds& delay, int num, bool immediate_first) {
+RepeatedTaskId TimerThread::PostDelayedRepeated(Task task, const std::chrono::microseconds& delay, int num, bool immediate_first) {
     if (stop_.load() || !start_.load()) {
-        return;
+        return -1;
     }
 
     auto repeated_task_id = GetNextRepeatedTaskId();
@@ -95,10 +95,12 @@ void TimerThread::PostDelayedRepeated(Task task, const std::chrono::microseconds
     }
 
     PostDelayedRepeatedInterval(std::move(task), delay, repeated_task_id, num);
+    return repeated_task_id;
 }
 
 void TimerThread::PostDelayedRepeatedInterval(Task task, const std::chrono::microseconds& delay, RepeatedTaskId task_id, int num) {
     if (stop_.load() || !start_.load() || repeated_task_dict_.find(task_id) == repeated_task_dict_.end() || num == 0) {
+        repeated_task_dict_.erase(task_id);
         return;
     }
 

@@ -15,14 +15,14 @@
 namespace tool {
 namespace context {
 
-using TimerTask = std::function<void(void)>;
+using Task = std::function<void(void)>;
 using RepeatedTaskId = uint64_t;
 
 class TimerThread {
 public:
     struct TimerInterval {
         std::chrono::time_point<std::chrono::high_resolution_clock> interval; // Interval in milliseconds
-        TimerTask task;
+        Task task;
         int repeated_task_id;
 
         bool operator<(const TimerInterval& rhs) const { return rhs.interval < interval; }
@@ -35,12 +35,11 @@ public:
     bool Start();
 
     // 简单实现，周期性的定时任务不考虑返回future
-
     void PostDelayed(Task task, const std::chrono::microseconds& delay);
 
     // 简单实现，周期性的定时任务不考虑返回future
     // immediate_first 表示是否立即执行第一次任务
-   void PostDelayedRepeated(Task task, const std::chrono::microseconds& delay, int num = 1, bool immediate_first = true);
+   RepeatedTaskId PostDelayedRepeated(Task task, const std::chrono::microseconds& delay, int num = 1, bool immediate_first = true);
 
 
 private:

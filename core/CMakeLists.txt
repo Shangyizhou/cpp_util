@@ -28,13 +28,19 @@ foreach(file_path ${MODULES_SOURCE_DIR})
             ${file_path}/*.cc ${file_path}/*.h
             ${file_path}/*.mm ${file_path}/*.cpp
     )
-    # 排除路径中包含 "proto" 目录的文件（示例）
-#    list(FILTER file_source EXCLUDE REGEX "")
     list(APPEND TOOL_ALL_SOURCE_CODE ${file_source})
 endforeach()
 
 # 创建静态库
 add_library(tool STATIC ${TOOL_ALL_SOURCE_CODE})
+
+option(ENABLE_ASAN "Enable AddressSanitizer" ON)
+if(ENABLE_ASAN)
+    # 添加编译和链接选项
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer -g)
+    add_link_options(-fsanitize=address)
+    message(STATUS "AddressSanitizer enabled")
+endif()
 
 # tool 使用 spdlog 依赖，但是依赖 tool 的不会依赖 spdlog
 target_link_libraries(tool PRIVATE spdlog::spdlog protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite ${FFMPEG_LIBRARY_DIRS} ${FFMPEG_LIBRARIES})
@@ -57,7 +63,7 @@ target_include_directories(tool PUBLIC
     ${FFMPEG_INCLUDE_DIRS} 
     ${SDL_INCLUDE_DIRS} 
     ${MODULES_SOURCE_DIR}
-) 
+)
 
 # PUBLIC 表示这些头文件路径会传播给任何链接 tool 的目标，这些目标自动包含 File/ 和 Log/ 目录的头文件
 target_include_directories(tool PUBLIC ${MODULES_SOURCE_DIR}) 
