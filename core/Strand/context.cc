@@ -7,11 +7,15 @@
 namespace tool {
 namespace context {
 
+/**
+ * ExecutorManager 隐藏实现到 .cc，属于代理模式的一种实现
+ */
 class ExecutorManager {
 public:
     ExecutorManager() {
         executor_ = std::make_unique<Executor>();
         timer_executor_ = std::make_unique<TimerThread>();
+        timer_executor_->Start();
     }
 
     ~ExecutorManager() {
