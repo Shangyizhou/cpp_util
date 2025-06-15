@@ -28,6 +28,7 @@ foreach(file_path ${MODULES_SOURCE_DIR})
             ${file_path}/*.cc ${file_path}/*.h
             ${file_path}/*.mm ${file_path}/*.cpp
     )
+    list(FILTER file_source EXCLUDE REGEX "/Media2/")
     list(APPEND TOOL_ALL_SOURCE_CODE ${file_source})
 endforeach()
 

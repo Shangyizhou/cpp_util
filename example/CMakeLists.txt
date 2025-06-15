@@ -6,6 +6,6 @@
 # add_subdirectory(FileTest)
 # add_subdirectory(ThreadTest)
 # add_subdirectory(AnyTest)
-add_subdirectory(SpaceTest)
+add_subdirectory(SDLTest)
 # add_subdirectory(FFPlayerTest)
 # add_subdirectory(PlayerGithub)
