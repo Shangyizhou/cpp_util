@@ -13,6 +13,8 @@ extern std::string kServiceDomain;
 class Error {
 public:
     Error() {}
+    Error(int code, const std::string& desc) 
+        : code_(code), domain_(kToolDomain), desc_(desc) {}
     Error(int code, const std::string& domain, const std::string& desc) 
         : code_(code), domain_(domain), desc_(desc) {}
 

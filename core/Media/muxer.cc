@@ -29,7 +29,7 @@ std::shared_ptr<Error> Muxer::AddStream() {
     AVStream *stream = avformat_new_stream(output_format_context_, nullptr);
     if (!stream) {
         LOG_ERROR("Could not create new stream");
-        return std::make_shared<Error>(ErrorCode::OTHER_ERROR, "Could not create new stream");
+        return std::make_shared<Error>(static_cast<int>(ErrorCode::OTHER_ERROR), "Could not create new stream");
     }
 
     // Set stream parameters here (codec, bitrate, etc.)
@@ -43,7 +43,7 @@ std::shared_ptr<Error> Muxer::WriteHeader() {
     int ret = avformat_write_header(output_format_context_, nullptr); // 写文件头
     if (ret < 0) {
         LOG_ERROR("Could not write file header and ret = {}", ret);
-        return std::make_shared<Error>(ErrorCode::OTHER_ERROR, "Could not write file header");
+        return std::make_shared<Error>(static_cast<int>(ErrorCode::OTHER_ERROR), "Could not write file header");
     }
     return nullptr;
 }
@@ -52,7 +52,7 @@ std::shared_ptr<Error> Muxer::WritePacket() {
     AVPacket *packet = av_packet_alloc(); // 分配一个数据包
     if (!packet) {
         LOG_ERROR("Could not allocate AVPacket");
-        return std::make_shared<Error>(ErrorCode::OTHER_ERROR, "Could not allocate AVPacket");
+        return std::make_shared<Error>(static_cast<int>(ErrorCode::OTHER_ERROR), "Could not allocate AVPacket");
     }
 
     if (packet_callback_) {
@@ -69,7 +69,7 @@ std::shared_ptr<Error> Muxer::WriteTrailer() {
     int ret = av_write_trailer(output_format_context_); // 写文件尾
     if (ret < 0) {
         LOG_ERROR("Could not write file trailer and ret = {}", ret);
-        return std::make_shared<Error>(ErrorCode::OTHER_ERROR, "Could not write file trailer");
+        return std::make_shared<Error>(static_cast<int>(ErrorCode::OTHER_ERROR), "Could not write file trailer");
     }
     return nullptr;
 }
