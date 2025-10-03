@@ -14,7 +14,7 @@ public:
     virtual void run() = 0;
 protected:
     std::thread m_thread;
-    std::atomic<bool> m_stop = false;
+    std::atomic<bool> m_stop{false};
 };
 
 #endif

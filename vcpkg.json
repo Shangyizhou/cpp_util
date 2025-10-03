@@ -1,0 +1,50 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "dependencies": [
+    "spdlog",
+    "protobuf",
+    "miniz",
+    "sqlite3",
+    "gtest",
+    "ffmpeg",
+    "sdl2",
+    "sqlite-orm"
+  ],
+  "builtin-baseline": "a62ce77d56ee07513b4b67de1ec2daeaebfae51a", 
+  "overrides": [
+    {
+      "name": "spdlog",
+      "version": "1.15.3"
+    },
+    {
+      "name": "protobuf",
+      "version": "3.21.12"
+    },
+    {
+      "name": "miniz",
+      "version": "3.1.0"
+    },
+    {
+      "name": "sqlite3",
+      "version": "3.45.1"
+    },
+    {
+      "name": "gtest",
+      "version": "1.16.0"
+    },
+    {
+      "name": "ffmpeg",
+      "version": "7.1.1"
+    },
+    {
+      "name": "sdl2",
+      "version": "2.32.10"
+    },
+    {
+      "name": "sqlite-orm",
+      "version": "1.9.1"
+    }
+    
+  ]
+  
+}

@@ -1,5 +1,17 @@
 cmake_minimum_required(VERSION 3.22.0)
 
+cmake_minimum_required(VERSION 3.5.0)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CXX_FLAGS
+    -g
+    -Wall
+    -O3
+    -std=c++14
+    )
+
+# cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=[你的vcpkg安装路径]/scripts/buildsystems/vcpkg.cmake
 set(CMAKE_TOOLCHAIN_FILE "/home/shangyizhou/code/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 project(MyProject)
 
@@ -7,9 +19,10 @@ option(TOOL_BUILD_CORE "whether build core" ON)
 option(TOOL_BUILD_EXAMPLE "whether build example" ON)
 
 # REQUIRED 设置之后如果没有找到则会退出
-list(APPEND CMAKE_PREFIX_PATH "/home/shangyizhou/code/cpp/vcpkg/installed/x64-linux")
-find_package(spdlog CONFIG REQUIRED)
+# list(APPEND CMAKE_PREFIX_PATH "/home/shangyizhou/code/cpp/vcpkg/installed/x64-linux")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
 
+find_package(spdlog CONFIG REQUIRED)
 if(TARGET spdlog::spdlog)
     # 获取目标属性（现代CMake正确方式）
     get_target_property(SPDLOG_INCLUDES spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
@@ -28,7 +41,6 @@ endif()
 
 
 find_package(protobuf CONFIG REQUIRED)
-
 if(protobuf_FOUND)
     message(STATUS "protobuf version: ${protobuf_VERSION}")
     message(STATUS "protobuf includes: ${protobuf_INCLUDE_DIRS}")

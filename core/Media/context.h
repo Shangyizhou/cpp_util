@@ -72,11 +72,11 @@ private:
 
     std::mutex m_pause_mutex;
     std::condition_variable m_pause_cond;
-    std::atomic<bool> paused = false; // 暂停/恢复播放
-    std::atomic<bool> stop = false;   // 停止播放
+    std::atomic<bool> paused{false}; // 暂停/恢复播放
+    std::atomic<bool> stop{false};   // 停止播放
 
     // seek操作
-    std::atomic<bool> seek_req = false;    // seek操作
+    std::atomic<bool> seek_req{false};    // seek操作
     int seek_flags = 0;
     int64_t seek_pos = 0;
     int64_t seek_rel = 0;

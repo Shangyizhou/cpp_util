@@ -45,8 +45,8 @@ private:
     double m_current_audio_clock = 0.0;
     double m_last_audio_clock = 0.0;
 
-    std::atomic<int> m_volume = DEFAULT_VOLUME_VALUE;
-    std::atomic<bool> m_muted = false;
+    std::atomic<int> m_volume{DEFAULT_VOLUME_VALUE};
+    std::atomic<bool> m_muted{false};
     
 };
 

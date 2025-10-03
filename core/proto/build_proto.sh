@@ -1,1 +1,1 @@
-protoc --cpp_out=. message.proto
+/home/shangyizhou/code/cpp_util/vcpkg_installed/x64-linux/tools/protobuf/protoc --cpp_out=. message.proto

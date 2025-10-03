@@ -104,7 +104,7 @@ void Demuxer::demux_loop() {
             }
         }
         if (m_ctx->paused) {
-            std::unique_lock lock(m_ctx->m_pause_mutex);
+           std::unique_lock<std::mutex> lock(m_ctx->m_pause_mutex);
             m_ctx->m_pause_cond.wait_for(lock, std::chrono::milliseconds(40));
             continue;
         }

@@ -41,7 +41,7 @@ private:
     int64_t m_duration = 0; // 当前队列包的总播放时长
 
     int m_serial = 1;
-    std::atomic<bool> m_abort_request = false;
+    std::atomic<bool> m_abort_request{false};
 
     std::mutex m_mutex;
     std::condition_variable m_cond;

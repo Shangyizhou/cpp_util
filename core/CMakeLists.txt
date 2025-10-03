@@ -1,13 +1,5 @@
 set(TOOL_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_CXX_STANDARD 11)
-set(CXX_FLAGS
-    -g
-    -Wall
-    -O3
-    -std=c++11
-    )
-
 # 定义源码目录列表
 set(MODULES_SOURCE_DIR
     ${TOOL_SOURCE_DIR}
@@ -49,7 +41,6 @@ target_link_libraries(tool PRIVATE protobuf::libprotoc protobuf::libprotobuf pro
 target_link_libraries(tool PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
 target_link_libraries(tool PRIVATE miniz::miniz)
 target_link_libraries(tool PRIVATE sqlite_orm::sqlite_orm)
-
 target_link_libraries(tool
         PRIVATE
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
