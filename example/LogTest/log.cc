@@ -2,7 +2,6 @@
 #include <vector>
 #include <map>
 
-
 int main() {
     // 基本类型
     int integer = 42;

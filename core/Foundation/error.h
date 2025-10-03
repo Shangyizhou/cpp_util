@@ -20,14 +20,14 @@ public:
 
     static std::shared_ptr<Error> kNoError;
 
-    static std::shared_ptr<Error> NewToolError(int code, const std::string& desc);
-
-    static std::shared_ptr<Error> NewServiceError(int code, const std::string& desc);
-
 private:
     int code_;
     std::string domain_;
     std::string desc_;
 };
+
+std::shared_ptr<Error> NewToolError(int code, const std::string& desc);
+
+std::shared_ptr<Error> NewServiceError(int code, const std::string& desc);
 
 }
